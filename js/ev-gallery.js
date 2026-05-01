@@ -59,6 +59,7 @@ async function initGallery(root) {
   scenes.forEach((s, i) => {
     const b = document.createElement("button");
     b.type = "button";
+    b.className = "button is-small is-rounded";
     b.textContent = `Scene ${s.label}`;
     b.dataset.idx = String(i);
     b.addEventListener("click", () => { state.sceneIdx = i; render(); });
@@ -69,6 +70,7 @@ async function initGallery(root) {
   methods.forEach((m, i) => {
     const b = document.createElement("button");
     b.type = "button";
+    b.className = "button is-small is-rounded";
     b.textContent = m;
     b.dataset.idx = String(i);
     b.addEventListener("click", () => { state.methodIdx = i; render(); });
@@ -109,9 +111,9 @@ async function initGallery(root) {
     img.src = urlFor(state.sceneIdx, state.methodIdx, state.ev);
     evLabel.textContent = formatEv(state.ev);
     [...sceneRow.children].forEach((b, i) =>
-      b.classList.toggle("active", i === state.sceneIdx));
+      b.classList.toggle("is-active-tab", i === state.sceneIdx));
     [...methodRow.children].forEach((b, i) =>
-      b.classList.toggle("active", i === state.methodIdx));
+      b.classList.toggle("is-active-tab", i === state.methodIdx));
 
     // Preload neighbors.
     const evNeighbors = [state.ev - 1, state.ev + 1].filter(e =>

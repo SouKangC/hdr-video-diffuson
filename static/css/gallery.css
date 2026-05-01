@@ -1,0 +1,63 @@
+/* EV gallery component — extends Bulma. Kept in its own file so the page's
+   custom CSS surface is small and easy to audit. */
+
+.ev-gallery {
+  background: #fafafa;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1rem auto;
+  max-width: 100%;
+}
+
+.ev-gallery .scene-row,
+.ev-gallery .method-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+  margin: 0.6rem 0;
+}
+
+.ev-gallery .gallery-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0.6rem auto;
+  background: #000;
+  min-height: 240px;
+  border-radius: 4px;
+}
+
+.ev-gallery .ev-slider {
+  display: block;
+  width: 100%;
+  margin: 0.8rem 0 0.4rem;
+}
+
+.ev-gallery .ev-label {
+  text-align: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* Bulma .button styles dynamically attached in ev-gallery.js. The .is-link
+   modifier is applied to the active tab to highlight the current selection
+   in the Bulma primary blue. */
+.ev-gallery .button.is-active-tab {
+  background-color: #c0392b;
+  border-color: #c0392b;
+  color: #fff;
+}
+.ev-gallery .button.is-active-tab:hover {
+  background-color: #a93226;
+  border-color: #a93226;
+  color: #fff;
+}
+
+/* Result-table tweaks: highlight the "Ours" row. */
+table.results tr.ours td {
+  color: #c0392b;
+  font-weight: 600;
+}

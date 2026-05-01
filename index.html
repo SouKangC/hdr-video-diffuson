@@ -1,220 +1,379 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>Single-Shot HDR Recovery via a Video Diffusion Prior</title>
-  <meta name="description" content="Project page for Single-Shot HDR Recovery via a Video Diffusion Prior. Interactive method-vs-baselines exposure comparison.">
-  <link rel="stylesheet" href="style.css">
+  <meta name="description"
+        content="Single-shot HDR reconstruction reframed as conditional video generation. Interactive method-vs-baselines exposure comparison.">
+  <meta name="keywords"
+        content="HDR, video diffusion, single-shot HDR, exposure bracket, computational photography, computer vision">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Single-Shot HDR Recovery via a Video Diffusion Prior">
+  <meta property="og:description"
+        content="Single-shot HDR reconstruction reframed as conditional video generation. Interactive method-vs-baselines exposure comparison.">
+  <meta property="og:image" content="assets/teaser.webp">
+  <meta name="twitter:card" content="summary_large_image">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&display=swap">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <!-- Critical CSS -->
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <link rel="stylesheet" href="static/css/gallery.css">
+
+  <!-- Non-critical CSS -->
+  <link rel="preload" href="static/css/bulma-slider.min.css" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css"
+        as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+  <script defer type="module" src="js/ev-gallery.js"></script>
 </head>
 <body>
 
-<header>
-  <h1>Single-Shot HDR Recovery via a Video Diffusion Prior</h1>
-  <p class="authors">
-    Chinmay Talegaonkar, Nikhil Gandudi Suresh, Zachary Novack,
-    Yash Belhe, Priyanka Nagasamudra, Nicholas Antipa
-  </p>
-  <p class="affil">University of California San Diego</p>
-  <nav class="action-buttons">
-    <a href="#">Paper</a>
-    <a href="#">arXiv</a>
-    <a href="#">Code</a>
-    <a href="#">Data</a>
-    <a href="#bibtex">BibTeX</a>
-  </nav>
-</header>
+<button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+  <i class="fas fa-chevron-up"></i>
+</button>
 
-<figure id="teaser">
-  <img src="assets/teaser.webp" alt="Off-the-shelf video model already produces coherent exposure brackets from one image">
-  <figcaption>
-    <strong>Video diffusion models contain implicit priors for exposure brackets.</strong>
-    Given an LDR image (a), an off-the-shelf video model (Runway Gen 4) already produces a coherent exposure burst (b).
-  </figcaption>
-</figure>
+<main id="main-content">
 
-<section id="abstract">
-  <h2>Abstract</h2>
-  <p>Recent generative methods for single-shot HDR image reconstruction show promising results, but often struggle with preserving fidelity to the input image: they hallucinate content, require separate models to handle highlights and shadows, or sacrifice interpretability by directly predicting the final HDR image. We address these limitations by re-casting single-shot HDR reconstruction as conditional video generation followed by a light-weight fusion of the generated frames. Given a single LDR input, we fine-tune a video diffusion model to generate an LDR image bracket with monotonically increasing exposures, and then fuse the generated frames using a lightweight U-Net that predicts per-pixel weights. This formulation is simple, interpretable, and effective. Rather than directly hallucinating an HDR image, it explicitly reconstructs the intermediate exposure stack and fuses it into the final output. Our method eliminates the need for separate models across exposure regimes and produces HDR reconstructions with high input fidelity. On quantitative benchmarks, our method achieves state-of-the-art results on several reconstruction metrics. Human evaluators further prefer our results in 72% of pairwise comparisons against existing methods. Finally, we show that this framework of recasting image reconstruction tasks as conditional video generation, followed by fusing the video frames, generalizes beyond HDR to other computational imaging tasks, including all-in-focus image recovery from a single defocus-blurred input.</p>
-</section>
+<!-- Hero: title, authors, publication links -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Single-Shot HDR Recovery via a Video Diffusion Prior</h1>
 
-<section id="method">
-  <h2>Method</h2>
-  <figure>
-    <img src="assets/pipeline.webp" alt="Two-stage pipeline: video diffusion model generates LDR bracket, fusion U-Net combines them into HDR">
-  </figure>
-  <p>We propose a two-stage pipeline for single-shot HDR reconstruction by reframing it as a conditional video generation problem. Our central observation is that an exposure bracket is structurally analogous to a video, where instead of scene motion, the temporal variation reflects changes in exposure. This suggests that video diffusion models can serve as strong priors for synthesizing plausible exposure stacks from a single image. Indeed, when prompted with a single image, an off-the-shelf video generation model already produces coherent bracketed exposures. To avoid spurious inconsistencies in the generated exposure stack, we fine-tune a video diffusion model to generate an LDR stack with monotonically increasing exposures. Unlike recent generative single-shot HDR methods, which rely only on spatial priors, our approach leverages both spatial and temporal priors by using a video generation model to generate a plausible image sequence conditioned on the input LDR image. We then fuse the synthesized stack using per-pixel blend weights predicted by a small network.</p>
-  <p>We reformulate single-shot HDR reconstruction as a conditional exposure-bracket generation problem, in which a single LDR image is used to generate an ordered sequence of LDR frames with monotonically increasing exposure values, which are then fused to recover the final HDR image. Because neighboring frames in this exposure stack exhibit smooth variations, the stack can be naturally viewed as a video sequence. We therefore cast exposure-bracket generation as a video synthesis problem and fine-tune a pretrained video diffusion model to synthesize the missing exposures conditioned on the input LDR image. During training, each HDR image is converted into a monotonic exposure stack ordered from low to high exposure, and this ordering is kept fixed throughout training and inference. As a result, the model always learns a canonical mapping from low to high exposures along the temporal axis, even when the observed conditioning frame is not the first frame in the sequence. We then train a separate, smaller network (Fusion UNet) to predict per-pixel weights for fusing the LDR frames generated by the fine-tuned video model.</p>
-</section>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Chinmay Talegaonkar<sup>*</sup>,</span>
+            <span class="author-block">Nikhil Gandudi Suresh,</span>
+            <span class="author-block">Zachary Novack,</span>
+            <span class="author-block">Yash Belhe,</span>
+            <span class="author-block">Priyanka Nagasamudra,</span>
+            <span class="author-block">Nicholas Antipa</span>
+          </div>
 
-<section id="stack">
-  <h2>Predicted Exposure Stack</h2>
-  <p>
-    Our model generates a video-like sequence of LDR frames at monotonically
-    increasing exposures from a single LDR input. The fusion U-Net then combines
-    them into the final HDR output.
-  </p>
-  <!-- v1: static figure substitute. v2 replaces this <img> with an interactive
-       <div class="scrubber" data-...> driven by stack-scrubber.js. -->
-  <figure>
-    <img src="assets/stack_static.webp" alt="Predicted LDR exposure stack from one input image">
-  </figure>
-</section>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">University of California San Diego</span>
+            <br>
+            <span class="author-block">NeurIPS 2026 Submission</span>
+            <br>
+            <span class="eql-cntrb"><small><sup>*</sup>Corresponding author</small></span>
+          </div>
 
-<section id="comparisons">
-  <h2>Comparison with Baselines (interactive)</h2>
-  <p>
-    Pick a scene, a method, and an EV stop. The image below re-tone-maps the
-    HDR output of the chosen method at the chosen exposure. Comparing the same
-    scene across methods at the same EV reveals where each method recovers
-    highlights and shadows.
-  </p>
-
-  <div class="ev-gallery"
-       data-scenes-src="scenes.json"
-       data-methods='["GT","Ours","BracketDiff","HDRCNN","SingleHDR","LEDiff","X2HDR"]'
-       data-evs='[-3,-2,-1,0,1,2,3]'
-       data-template="assets/gallery/scene_{scene}/{method}_ev{ev}.webp"
-       data-scenes-fallback='[{"id":12,"label":"A"}]'>
-    <div class="scene-row"></div>
-    <img class="gallery-img" alt="">
-    <div class="method-row"></div>
-    <input type="range" class="ev-slider" min="-3" max="3" step="1" value="0">
-    <div class="ev-label">EV: <span class="ev">+0</span></div>
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="#" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-database"></i></span>
+                  <span>Data</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#BibTeX" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-quote-left"></i></span>
+                  <span>BibTeX</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<section id="quantitative">
-  <h2>Quantitative Results</h2>
-  <p>
-    Reconstruction metrics on the SI-HDR benchmark. Best in <strong>bold</strong>.
-    We report the scale-invariant Q* metrics (PSNR, SSIM, MAE, LPIPS) along with
-    Q-JOD from HDR-VDP3 and inference time.
-  </p>
-  <table class="results">
-    <thead>
-      <tr>
-        <th>Method</th>
-        <th>Q*-PSNR &uarr;</th>
-        <th>Q*-SSIM &uarr;</th>
-        <th>Q*-MAE &darr;</th>
-        <th>Q*-LPIPS &darr;</th>
-        <th>Q-JOD &uarr;</th>
-        <th>Time &darr;</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr class="ours">
-        <td>Ours</td>
-        <td><strong>22.36 &plusmn; 3.48</strong></td>
-        <td>0.664 &plusmn; 0.156</td>
-        <td><strong>0.060 &plusmn; 0.027</strong></td>
-        <td><strong>0.289 &plusmn; 0.111</strong></td>
-        <td>7.51 &plusmn; 0.99</td>
-        <td>~15s</td>
-      </tr>
-      <tr>
-        <td>LEDiff</td>
-        <td>18.97 &plusmn; 3.07</td>
-        <td>0.552 &plusmn; 0.128</td>
-        <td>0.098 &plusmn; 0.043</td>
-        <td>0.384 &plusmn; 0.128</td>
-        <td>6.55 &plusmn; 0.98</td>
-        <td>~15s</td>
-      </tr>
-      <tr>
-        <td>BracketDiff</td>
-        <td>21.41 &plusmn; 3.87</td>
-        <td><strong>0.734 &plusmn; 0.128</strong></td>
-        <td>0.077 &plusmn; 0.044</td>
-        <td>0.353 &plusmn; 0.161</td>
-        <td>7.51 &plusmn; 1.21</td>
-        <td>~6min</td>
-      </tr>
-      <tr>
-        <td>X2HDR (SD2.1)</td>
-        <td>21.24 &plusmn; 3.32</td>
-        <td>0.585 &plusmn; 0.150</td>
-        <td>0.068 &plusmn; 0.030</td>
-        <td>0.335 &plusmn; 0.120</td>
-        <td>7.17 &plusmn; 0.97</td>
-        <td>~15s</td>
-      </tr>
-      <tr>
-        <td>HDRCNN</td>
-        <td>21.50 &plusmn; 6.27</td>
-        <td>0.601 &plusmn; 0.281</td>
-        <td>0.098 &plusmn; 0.073</td>
-        <td>0.342 &plusmn; 0.246</td>
-        <td><strong>7.66 &plusmn; 1.68</strong></td>
-        <td>&lt;1s</td>
-      </tr>
-      <tr>
-        <td>SingleHDR</td>
-        <td>21.61 &plusmn; 3.93</td>
-        <td>0.698 &plusmn; 0.176</td>
-        <td>0.075 &plusmn; 0.039</td>
-        <td>0.302 &plusmn; 0.180</td>
-        <td>7.56 &plusmn; 1.40</td>
-        <td>&lt;1s</td>
-      </tr>
-    </tbody>
-  </table>
+
+<!-- Teaser figure -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <figure class="image">
+        <img src="assets/teaser.webp"
+             alt="Off-the-shelf video model already produces coherent exposure brackets from one image">
+      </figure>
+      <h2 class="subtitle has-text-centered">
+        <strong>Video diffusion models contain implicit priors for exposure brackets.</strong>
+        Given an LDR image (a), an off-the-shelf video model (Runway Gen 4) already
+        produces a coherent exposure burst (b).
+      </h2>
+    </div>
+  </div>
 </section>
 
-<section id="user-study">
-  <h2>User Study</h2>
-  <p>
-    A 20-participant pairwise study with 1920 total judgements. Participants
-    saw each output centred against the ground-truth HDR reference and chose
-    which of two reconstructions matched the GT more faithfully.
-  </p>
-  <p>
-    <strong>Ours preferred in 1382 / 1920 = 72.0% of pairwise comparisons.</strong>
-    Statistically significant against chance for every baseline (binomial,
-    smallest p &lt; 10<sup>-4</sup>).
-  </p>
-  <table class="results">
-    <thead>
-      <tr><th>Baseline</th><th>Ours-preferred</th><th>Win rate</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>LEDiff</td>       <td>336 / 390</td><td>86.2%</td></tr>
-      <tr><td>HDRCNN</td>       <td>279 / 379</td><td>73.6%</td></tr>
-      <tr><td>SingleHDR</td>    <td>274 / 383</td><td>71.5%</td></tr>
-      <tr><td>BracketDiff</td>  <td>259 / 383</td><td>67.6%</td></tr>
-      <tr><td>X2HDR (SD2.1)</td><td>234 / 385</td><td>60.8%</td></tr>
-      <tr class="ours"><td>All baselines</td><td>1382 / 1920</td><td>72.0%</td></tr>
-    </tbody>
-  </table>
+
+<!-- Abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>Recent generative methods for single-shot HDR image reconstruction show promising results, but often struggle with preserving fidelity to the input image: they hallucinate content, require separate models to handle highlights and shadows, or sacrifice interpretability by directly predicting the final HDR image. We address these limitations by re-casting single-shot HDR reconstruction as conditional video generation followed by a light-weight fusion of the generated frames. Given a single LDR input, we fine-tune a video diffusion model to generate an LDR image bracket with monotonically increasing exposures, and then fuse the generated frames using a lightweight U-Net that predicts per-pixel weights. This formulation is simple, interpretable, and effective. Rather than directly hallucinating an HDR image, it explicitly reconstructs the intermediate exposure stack and fuses it into the final output. Our method eliminates the need for separate models across exposure regimes and produces HDR reconstructions with high input fidelity. On quantitative benchmarks, our method achieves state-of-the-art results on several reconstruction metrics. Human evaluators further prefer our results in 72% of pairwise comparisons against existing methods. Finally, we show that this framework of recasting image reconstruction tasks as conditional video generation, followed by fusing the video frames, generalizes beyond HDR to other computational imaging tasks, including all-in-focus image recovery from a single defocus-blurred input.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<section id="defocus">
-  <h2>Generalization: All-in-Focus from a Single Defocused Image</h2>
-  <p>Our method embodies the insight that many computational imaging problems can be re-cast as conditional video generation, followed by a task-specific fusion of the generated frames. In such settings, a strong video diffusion model can be fine-tuned to generate an ordered stack of intermediate images conditioned on the input, which can then be fused to obtain the final output. While we focus primarily on single-shot HDR reconstruction, the same framework extends naturally to other problems.</p>
-  <p>As a proof of concept, we also apply it to all-in-focus image recovery from a single defocus-blurred input. In this setting, we fine-tune the video model to generate a focal stack with monotonically varying focus depth, analogous to the monotonic exposure progression used in the HDR case, and train a separate Fusion UNet on the same stack distribution to fuse the generated frames into an all-in-focus image. We simulate training data using paired RGB images and depth maps from the NYUv2 dataset, rendering focal stacks with a simple depth-aware defocus blur model. The results below provide a strong proof of concept that our framework extends beyond HDR to other computational photography tasks.</p>
-  <figure>
-    <img src="assets/defocus_results.webp" alt="All-in-focus image recovery from a single defocus-blurred input">
-  </figure>
+
+<!-- Method -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Method</h2>
+    <figure class="image">
+      <img src="assets/pipeline.webp"
+           alt="Two-stage pipeline: video diffusion model generates LDR bracket, fusion U-Net combines them into HDR">
+    </figure>
+    <div class="content has-text-justified">
+      <p>We propose a two-stage pipeline for single-shot HDR reconstruction by reframing it as a conditional video generation problem. Our central observation is that an exposure bracket is structurally analogous to a video, where instead of scene motion, the temporal variation reflects changes in exposure. This suggests that video diffusion models can serve as strong priors for synthesizing plausible exposure stacks from a single image. Indeed, when prompted with a single image, an off-the-shelf video generation model already produces coherent bracketed exposures. To avoid spurious inconsistencies in the generated exposure stack, we fine-tune a video diffusion model to generate an LDR stack with monotonically increasing exposures. Unlike recent generative single-shot HDR methods, which rely only on spatial priors, our approach leverages both spatial and temporal priors by using a video generation model to generate a plausible image sequence conditioned on the input LDR image. We then fuse the synthesized stack using per-pixel blend weights predicted by a small network.</p>
+      <p>We reformulate single-shot HDR reconstruction as a conditional exposure-bracket generation problem, in which a single LDR image is used to generate an ordered sequence of LDR frames with monotonically increasing exposure values, which are then fused to recover the final HDR image. Because neighboring frames in this exposure stack exhibit smooth variations, the stack can be naturally viewed as a video sequence. We therefore cast exposure-bracket generation as a video synthesis problem and fine-tune a pretrained video diffusion model to synthesize the missing exposures conditioned on the input LDR image. During training, each HDR image is converted into a monotonic exposure stack ordered from low to high exposure, and this ordering is kept fixed throughout training and inference. As a result, the model always learns a canonical mapping from low to high exposures along the temporal axis, even when the observed conditioning frame is not the first frame in the sequence. We then train a separate, smaller network (Fusion UNet) to predict per-pixel weights for fusing the LDR frames generated by the fine-tuned video model.</p>
+    </div>
+  </div>
 </section>
 
-<section id="bibtex">
-  <h2>BibTeX</h2>
-  <pre class="bibtex">@inproceedings{talegaonkar2026hdrvideo,
+
+<!-- Predicted Exposure Stack (static figure for v1) -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Predicted Exposure Stack</h2>
+    <div class="content has-text-justified">
+      <p>Our model generates a video-like sequence of LDR frames at monotonically increasing exposures from a single LDR input. The Fusion UNet then combines them into the final HDR output.</p>
+    </div>
+    <!-- v1: static figure substitute. v2 replaces this <img> with an interactive
+         <div class="scrubber" data-...> driven by stack-scrubber.js. -->
+    <figure class="image">
+      <img src="assets/stack_static.webp" alt="Predicted LDR exposure stack from one input image">
+    </figure>
+  </div>
+</section>
+
+
+<!-- EV gallery: method-vs-baselines interactive -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Comparison with Baselines (Interactive)</h2>
+    <div class="content has-text-justified">
+      <p>Pick a scene, pick a method, drag the EV slider. The image below re-tone-maps the chosen method's HDR output at the chosen exposure. Comparing the same scene across methods at the same EV reveals where each method recovers highlights and shadows.</p>
+    </div>
+    <div class="ev-gallery"
+         data-scenes-src="scenes.json"
+         data-methods='["GT","Ours","BracketDiff","HDRCNN","SingleHDR","LEDiff","X2HDR"]'
+         data-evs='[-3,-2,-1,0,1,2,3]'
+         data-template="assets/gallery/scene_{scene}/{method}_ev{ev}.webp"
+         data-scenes-fallback='[{"id":12,"label":"A"}]'>
+      <div class="scene-row"></div>
+      <img class="gallery-img" alt="">
+      <div class="method-row"></div>
+      <input type="range" class="ev-slider" min="-3" max="3" step="1" value="0">
+      <div class="ev-label">EV: <span class="ev">+0</span></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Quantitative results -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Quantitative Results</h2>
+    <div class="content has-text-justified">
+      <p>Reconstruction metrics on the SI-HDR benchmark. Best in <strong>bold</strong>. We report the scale-invariant Q* metrics (PSNR, SSIM, MAE, LPIPS) along with Q-JOD from HDR-VDP3 and inference time.</p>
+    </div>
+    <div class="table-container">
+      <table class="table is-bordered is-striped is-fullwidth results">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Q*-PSNR &uarr;</th>
+            <th>Q*-SSIM &uarr;</th>
+            <th>Q*-MAE &darr;</th>
+            <th>Q*-LPIPS &darr;</th>
+            <th>Q-JOD &uarr;</th>
+            <th>Time &darr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="ours">
+            <td>Ours</td>
+            <td><strong>22.36 &plusmn; 3.48</strong></td>
+            <td>0.664 &plusmn; 0.156</td>
+            <td><strong>0.060 &plusmn; 0.027</strong></td>
+            <td><strong>0.289 &plusmn; 0.111</strong></td>
+            <td>7.51 &plusmn; 0.99</td>
+            <td>~15s</td>
+          </tr>
+          <tr>
+            <td>LEDiff</td>
+            <td>18.97 &plusmn; 3.07</td>
+            <td>0.552 &plusmn; 0.128</td>
+            <td>0.098 &plusmn; 0.043</td>
+            <td>0.384 &plusmn; 0.128</td>
+            <td>6.55 &plusmn; 0.98</td>
+            <td>~15s</td>
+          </tr>
+          <tr>
+            <td>BracketDiff</td>
+            <td>21.41 &plusmn; 3.87</td>
+            <td><strong>0.734 &plusmn; 0.128</strong></td>
+            <td>0.077 &plusmn; 0.044</td>
+            <td>0.353 &plusmn; 0.161</td>
+            <td>7.51 &plusmn; 1.21</td>
+            <td>~6min</td>
+          </tr>
+          <tr>
+            <td>X2HDR (SD2.1)</td>
+            <td>21.24 &plusmn; 3.32</td>
+            <td>0.585 &plusmn; 0.150</td>
+            <td>0.068 &plusmn; 0.030</td>
+            <td>0.335 &plusmn; 0.120</td>
+            <td>7.17 &plusmn; 0.97</td>
+            <td>~15s</td>
+          </tr>
+          <tr>
+            <td>HDRCNN</td>
+            <td>21.50 &plusmn; 6.27</td>
+            <td>0.601 &plusmn; 0.281</td>
+            <td>0.098 &plusmn; 0.073</td>
+            <td>0.342 &plusmn; 0.246</td>
+            <td><strong>7.66 &plusmn; 1.68</strong></td>
+            <td>&lt;1s</td>
+          </tr>
+          <tr>
+            <td>SingleHDR</td>
+            <td>21.61 &plusmn; 3.93</td>
+            <td>0.698 &plusmn; 0.176</td>
+            <td>0.075 &plusmn; 0.039</td>
+            <td>0.302 &plusmn; 0.180</td>
+            <td>7.56 &plusmn; 1.40</td>
+            <td>&lt;1s</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+
+<!-- User study -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">User Study</h2>
+    <div class="content has-text-justified">
+      <p>A 20-participant pairwise study with 1920 total judgements. Participants saw each output centred against the ground-truth HDR reference and chose which of two reconstructions matched the GT more faithfully.</p>
+      <p><strong>Ours preferred in 1382 / 1920 = 72.0% of pairwise comparisons.</strong> Statistically significant against chance for every baseline (binomial, smallest p &lt; 10<sup>-4</sup>).</p>
+    </div>
+    <div class="table-container">
+      <table class="table is-bordered is-striped is-fullwidth results">
+        <thead>
+          <tr><th>Baseline</th><th>Ours-preferred</th><th>Win rate</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>LEDiff</td>       <td>336 / 390</td><td>86.2%</td></tr>
+          <tr><td>HDRCNN</td>       <td>279 / 379</td><td>73.6%</td></tr>
+          <tr><td>SingleHDR</td>    <td>274 / 383</td><td>71.5%</td></tr>
+          <tr><td>BracketDiff</td>  <td>259 / 383</td><td>67.6%</td></tr>
+          <tr><td>X2HDR (SD2.1)</td><td>234 / 385</td><td>60.8%</td></tr>
+          <tr class="ours"><td>All baselines</td><td>1382 / 1920</td><td>72.0%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+
+<!-- Defocus generalization -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Generalization: All-in-Focus from a Single Defocused Image</h2>
+    <div class="content has-text-justified">
+      <p>Our method embodies the insight that many computational imaging problems can be re-cast as conditional video generation, followed by a task-specific fusion of the generated frames. In such settings, a strong video diffusion model can be fine-tuned to generate an ordered stack of intermediate images conditioned on the input, which can then be fused to obtain the final output. While we focus primarily on single-shot HDR reconstruction, the same framework extends naturally to other problems.</p>
+      <p>As a proof of concept, we also apply it to all-in-focus image recovery from a single defocus-blurred input. In this setting, we fine-tune the video model to generate a focal stack with monotonically varying focus depth, analogous to the monotonic exposure progression used in the HDR case, and train a separate Fusion UNet on the same stack distribution to fuse the generated frames into an all-in-focus image. We simulate training data using paired RGB images and depth maps from the NYUv2 dataset, rendering focal stacks with a simple depth-aware defocus blur model. The results below provide a strong proof of concept that our framework extends beyond HDR to other computational photography tasks.</p>
+    </div>
+    <figure class="image">
+      <img src="assets/defocus_results.webp" alt="All-in-focus image recovery from a single defocus-blurred input">
+    </figure>
+  </div>
+</section>
+
+
+<!-- BibTeX -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <div class="bibtex-header">
+      <h2 class="title">BibTeX</h2>
+      <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
+        <i class="fas fa-copy"></i>
+        <span class="copy-text">Copy</span>
+      </button>
+    </div>
+    <pre id="bibtex-code"><code>@inproceedings{talegaonkar2026hdrvideo,
   title  = {Single-Shot HDR Recovery via a Video Diffusion Prior},
   author = {Talegaonkar, Chinmay and Gandudi Suresh, Nikhil and Novack, Zachary
             and Belhe, Yash and Nagasamudra, Priyanka and Antipa, Nicholas},
   booktitle = {Advances in Neural Information Processing Systems},
   year   = {2026}
-}</pre>
+}</code></pre>
+  </div>
 </section>
 
-<footer>
-  Page template inspired by <a href="https://jonbarron.info">Jon Barron's website</a>.
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This page was built using the
+            <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>
+            which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            You are free to borrow the source code of this website, we just ask that you link back to this page in the footer.
+            <br>
+            This website is licensed under a
+            <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 </footer>
 
-<script type="module" src="js/ev-gallery.js"></script>
 </body>
 </html>
