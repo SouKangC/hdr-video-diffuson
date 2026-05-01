@@ -13,12 +13,19 @@ a:hover { color: var(--accent-dark); }
 .section .title.is-3,
 .bibtex-header h2.title { color: #000; }
 
-/* Publication-link buttons (Paper / arXiv / Code / Data / BibTeX): keep
-   Bulma `is-dark` black at rest; turn red on hover. */
-.publication-links .button.is-dark:hover {
+/* Publication-link buttons (Paper / arXiv / Code / Data / BibTeX): black
+   at rest, smoothly turn red on hover. */
+.publication-links .button.is-dark {
+  transition: background-color 0.25s ease, border-color 0.25s ease,
+              color 0.25s ease, transform 0.18s ease, box-shadow 0.25s ease;
+}
+.publication-links .button.is-dark:hover,
+.publication-links .button.is-dark:focus {
   background-color: var(--accent);
   border-color: var(--accent);
   color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(192, 57, 43, 0.35);
 }
 
 /* Scroll-to-top floating button. */
