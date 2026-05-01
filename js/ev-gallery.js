@@ -39,7 +39,11 @@ if (typeof document !== "undefined") {
 }
 
 async function initGallery(root) {
-  const methods = JSON.parse(root.dataset.methods);
+  // Each method entry can be either a plain string (key === label) or an
+  // object {key, label} so display names can differ from URL keys.
+  const methods = JSON.parse(root.dataset.methods).map((m) =>
+    typeof m === "string" ? { key: m, label: m } : m
+  );
   const evs = JSON.parse(root.dataset.evs);
   const template = root.dataset.template;
   const scenes = await loadScenes(root);
@@ -73,14 +77,14 @@ async function initGallery(root) {
   methods.forEach((m) => {
     const panel = document.createElement("div");
     panel.className = "gallery-panel"
-      + (m === "Ours" ? " is-ours" : "")
-      + (m === "GT" ? " is-gt" : "");
+      + (m.key === "Ours" ? " is-ours" : "")
+      + (m.key === "GT" ? " is-gt" : "");
     const label = document.createElement("div");
     label.className = "panel-label";
-    label.textContent = m;
+    label.textContent = m.label;
     const im = document.createElement("img");
     im.className = "panel-img";
-    im.alt = `${m} reconstruction`;
+    im.alt = `${m.label} reconstruction`;
     im.loading = "lazy";
     panel.appendChild(label);
     panel.appendChild(im);
@@ -100,10 +104,10 @@ async function initGallery(root) {
 
   // Image preload cache (bounded LRU-ish).
   const preloadCache = new Map();
-  function urlFor(sceneIdx, methodLabel, ev) {
+  function urlFor(sceneIdx, method, ev) {
     return buildTileUrl(template, {
       scene: scenes[sceneIdx].id,
-      method: methodLabel,
+      method: method.key,
       ev,
     });
   }
