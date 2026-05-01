@@ -8,6 +8,11 @@
 a, a:visited { color: var(--accent); }
 a:hover { color: var(--accent-dark); }
 
+/* Section headings (Abstract / Method / Quantitative Results / etc.) — pure
+   black instead of the default dark-grey / themed color. */
+.section .title.is-3,
+.bibtex-header h2.title { color: #000; }
+
 /* Publication-link buttons (Paper / arXiv / Code / Data / BibTeX): keep
    Bulma `is-dark` black at rest; turn red on hover. */
 .publication-links .button.is-dark:hover {
