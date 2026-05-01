@@ -1,45 +1,29 @@
-/* ---------- Compact typography overrides (applied page-wide) ---------- */
+/* ---------- Compact content overrides ----------
+   The hero (paper title, authors, publication-link buttons) keeps Bulma's
+   default sizing; only the body content of each section is shrunk. */
 
-html { font-size: 14px; }                        /* shrinks all rem-based Bulma sizes */
-body { line-height: 1.5; }
-
-/* Section / hero padding — Bulma's defaults are very roomy. */
-.section { padding: 1.6rem 1.2rem; }
-.hero .hero-body { padding: 1.6rem 1.2rem; }
-.hero.teaser .hero-body { padding: 0.8rem 1.2rem; }
-
-/* Title scale — smaller everywhere. */
-.title.is-1 { font-size: 1.9rem; line-height: 1.2; margin-bottom: 0.6rem; }
-.title.is-3 { font-size: 1.35rem; margin-bottom: 0.8rem; }
-.publication-authors.is-size-5,
-.is-size-5 { font-size: 0.95rem !important; }
-
-/* Author rows tighter. */
-.publication-authors { margin: 0.25rem 0; }
-.publication-authors .author-block { white-space: nowrap; }
-
-/* Publication-link buttons smaller. */
-.publication-links .button { padding: 0.4em 0.9em; font-size: 0.85rem; }
-.link-block { margin: 0.15rem; }
+/* Section / hero-body padding stays slightly tighter to reduce dead space. */
+.section { padding: 2rem 1.5rem; }
+.hero .hero-body { padding: 2rem 1.5rem; }
+.hero.teaser .hero-body { padding: 1rem 1.5rem; }
 
 /* Body content — tighter line-height + paragraph spacing. */
+.content { font-size: 0.875rem; line-height: 1.55; }
 .content p { margin-bottom: 0.7rem; }
-.content { font-size: 0.95rem; }
 
 /* Tables tighter. */
-table.table { font-size: 0.85rem; }
-table.table th, table.table td { padding: 0.35rem 0.5rem; }
+table.table { font-size: 0.8rem; }
+table.table th, table.table td { padding: 0.35rem 0.55rem; }
 
-/* BibTeX block smaller. */
+/* BibTeX block content smaller (the section title stays Bulma-default). */
 #BibTeX pre, #BibTeX code { font-size: 0.8rem; }
-.bibtex-header h2.title { font-size: 1.35rem; }
 
-/* Footer tighter. */
-.footer { padding: 1.2rem 1rem; }
+/* Footer content smaller. */
+.footer { padding: 1.5rem 1.5rem; }
 .footer .content { font-size: 0.8rem; }
 
-/* Subtitle (used under teaser image) smaller. */
-.subtitle { font-size: 0.95rem; }
+/* Teaser caption smaller. */
+.hero.teaser .subtitle { font-size: 0.9rem; line-height: 1.45; }
 
 /* ---------- EV gallery component — extends Bulma. Side-by-side method panels
    driven by a shared (scene, EV) state. ---------- */
