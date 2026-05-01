@@ -1,47 +1,17 @@
-/* ---------- Red accent palette ---------- */
+/* ---------- Red accent palette (used by Ours highlights + publication-link
+                button hover state). Everything else keeps Bulma defaults. ---------- */
 :root {
   --accent: #c0392b;
   --accent-dark: #a93226;
-  --accent-tint: #fff5f3;
 }
 
-/* All anchors in the page tone red (Bulma default is blue). */
-a, a:visited { color: var(--accent); }
-a:hover { color: var(--accent-dark); }
-
-/* Publication-link buttons: red instead of Bulma's `is-dark` black. */
-.publication-links .button.is-dark {
+/* Publication-link buttons (Paper / arXiv / Code / Data / BibTeX): keep
+   Bulma `is-dark` black at rest; turn red on hover. */
+.publication-links .button.is-dark:hover {
   background-color: var(--accent);
   border-color: var(--accent);
   color: #fff;
 }
-.publication-links .button.is-dark:hover {
-  background-color: var(--accent-dark);
-  border-color: var(--accent-dark);
-  color: #fff;
-}
-
-/* Subtle red underline accent on section headings. */
-.section .title.is-3 {
-  border-bottom: 2px solid var(--accent);
-  padding-bottom: 0.35rem;
-  display: inline-block;
-}
-
-/* Scroll-to-top floating button picks up the accent. */
-.scroll-to-top {
-  background: var(--accent);
-  color: #fff;
-}
-.scroll-to-top:hover { background: var(--accent-dark); }
-
-/* BibTeX copy button in accent color. */
-.copy-bibtex-btn {
-  background: var(--accent);
-  color: #fff;
-}
-.copy-bibtex-btn:hover { background: var(--accent-dark); }
-.copy-bibtex-btn.copied { background: #27ae60; }
 
 /* ---------- Compact content overrides ----------
    The hero (paper title, authors, publication-link buttons) keeps Bulma's
