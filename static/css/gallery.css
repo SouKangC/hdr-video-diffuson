@@ -11,6 +11,22 @@
 .content { font-size: 0.875rem; line-height: 1.3; }
 .content p { margin-bottom: 0.6rem; line-height: 1.3; }
 
+/* Uniform reading width for prose, tables, figures, and BibTeX across all
+   sections. Centers them so every section's body shares the same horizontal
+   line width. The EV gallery is excluded (kept at full container width) so the
+   side-by-side method panels have room to breathe. */
+:root { --reading-width: 720px; }
+.section .content,
+.section .table-container,
+.section figure.image,
+.section pre,
+#BibTeX pre,
+.hero:not(.teaser) .hero-body .content {
+  max-width: var(--reading-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Tables tighter. */
 table.table { font-size: 0.8rem; }
 table.table th, table.table td { padding: 0.35rem 0.55rem; }
