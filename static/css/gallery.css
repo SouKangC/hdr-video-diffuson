@@ -1,5 +1,5 @@
-/* EV gallery component — extends Bulma. Kept in its own file so the page's
-   custom CSS surface is small and easy to audit. */
+/* EV gallery component — extends Bulma. Side-by-side method panels driven by
+   a shared (scene, EV) state. */
 
 .ev-gallery {
   background: #fafafa;
@@ -10,29 +10,72 @@
   max-width: 100%;
 }
 
-.ev-gallery .scene-row,
-.ev-gallery .method-row {
+.ev-gallery .scene-row {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
   justify-content: center;
-  margin: 0.6rem 0;
+  margin: 0 0 1.2rem;
 }
 
-.ev-gallery .gallery-img {
-  display: block;
-  max-width: 100%;
-  height: auto;
-  margin: 0.6rem auto;
-  background: #000;
-  min-height: 240px;
+/* The method-panel grid. 7 columns at desktop, wrapping down at smaller widths. */
+.ev-gallery .gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0.5rem 0 0.8rem;
+}
+@media (max-width: 1100px) {
+  .ev-gallery .gallery-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  .ev-gallery .gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.ev-gallery .gallery-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e1e1e1;
   border-radius: 4px;
+  overflow: hidden;
+  min-width: 0;             /* allow shrinking inside grid */
+}
+.ev-gallery .gallery-panel.is-ours {
+  border-color: #c0392b;
+  box-shadow: 0 0 0 1px #c0392b;
+}
+
+.ev-gallery .panel-label {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  color: #555;
+  padding: 0.3rem 0.5rem;
+  background: #f4f4f4;
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid #e1e1e1;
+}
+.ev-gallery .gallery-panel.is-ours .panel-label {
+  color: #c0392b;
+  background: #fff5f3;
+  font-weight: 600;
+}
+
+.ev-gallery .panel-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #000;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
 }
 
 .ev-gallery .ev-slider {
   display: block;
   width: 100%;
-  margin: 0.8rem 0 0.4rem;
+  margin: 0.6rem 0 0.4rem;
 }
 
 .ev-gallery .ev-label {
@@ -42,9 +85,7 @@
   font-size: 0.95rem;
 }
 
-/* Bulma .button styles dynamically attached in ev-gallery.js. The .is-link
-   modifier is applied to the active tab to highlight the current selection
-   in the Bulma primary blue. */
+/* Active scene-tab highlight (red, matches "Ours" highlight in paper figures). */
 .ev-gallery .button.is-active-tab {
   background-color: #c0392b;
   border-color: #c0392b;

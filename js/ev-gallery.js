@@ -1,17 +1,23 @@
 // user_study/HDR_Video_Project_Page/js/ev-gallery.js
 //
-// Declarative EV gallery: a single <img> swapped on (scene, method, ev) input.
-// Container element configures everything via data-* attributes; this module
-// has no hardcoded scene IDs, method names, or paths.
+// Declarative EV gallery: a grid of method panels that all swap in lock-step on
+// (scene, ev) input. Container element configures everything via data-*
+// attributes; this module has no hardcoded scene IDs, method names, or paths.
 //
 // Required container attributes:
 //   data-scenes-src      URL to scenes.json (array of {id, label, ...})
-//   data-methods         JSON array of method labels
+//   data-methods         JSON array of method labels (one panel per method)
 //   data-evs             JSON array of integer EV stops
 //   data-template        URL template using {scene}, {method}, {ev} placeholders
 //
 // Optional fallback:
 //   data-scenes-fallback inline JSON used when fetch fails (e.g. file:// previews)
+//
+// Required child elements:
+//   .scene-row       container for scene-tab buttons (filled by JS)
+//   .gallery-grid    container for one panel per method (filled by JS)
+//   .ev-slider       <input type="range"> driving EV stop
+//   .ev-label .ev    span receiving the formatted EV string
 
 export function formatEv(ev) {
   // "+0", "+3", "-2" — matches the convention used by the render script.
@@ -43,15 +49,10 @@ async function initGallery(root) {
     return;
   }
 
-  const state = {
-    sceneIdx: 0,
-    methodIdx: methods.indexOf("Ours") >= 0 ? methods.indexOf("Ours") : 0,
-    ev: 0,
-  };
+  const state = { sceneIdx: 0, ev: 0 };
 
   const sceneRow = root.querySelector(".scene-row");
-  const methodRow = root.querySelector(".method-row");
-  const img = root.querySelector(".gallery-img");
+  const grid = root.querySelector(".gallery-grid");
   const slider = root.querySelector(".ev-slider");
   const evLabel = root.querySelector(".ev-label .ev");
 
@@ -66,15 +67,22 @@ async function initGallery(root) {
     sceneRow.appendChild(b);
   });
 
-  // Build method tabs.
-  methods.forEach((m, i) => {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "button is-small is-rounded";
-    b.textContent = m;
-    b.dataset.idx = String(i);
-    b.addEventListener("click", () => { state.methodIdx = i; render(); });
-    methodRow.appendChild(b);
+  // Build one panel per method. Each panel = label + image.
+  const panelImgs = [];
+  methods.forEach((m) => {
+    const panel = document.createElement("div");
+    panel.className = "gallery-panel" + (m === "Ours" ? " is-ours" : "");
+    const label = document.createElement("div");
+    label.className = "panel-label";
+    label.textContent = m;
+    const im = document.createElement("img");
+    im.className = "panel-img";
+    im.alt = `${m} reconstruction`;
+    im.loading = "lazy";
+    panel.appendChild(label);
+    panel.appendChild(im);
+    grid.appendChild(panel);
+    panelImgs.push(im);
   });
 
   // Wire slider.
@@ -87,12 +95,12 @@ async function initGallery(root) {
     render();
   });
 
-  // Helper: set <img> src and update active classes.
+  // Image preload cache (bounded LRU-ish).
   const preloadCache = new Map();
-  function urlFor(sceneIdx, methodIdx, ev) {
+  function urlFor(sceneIdx, methodLabel, ev) {
     return buildTileUrl(template, {
       scene: scenes[sceneIdx].id,
-      method: methods[methodIdx],
+      method: methodLabel,
       ev,
     });
   }
@@ -101,30 +109,28 @@ async function initGallery(root) {
     const im = new Image();
     im.src = url;
     preloadCache.set(url, im);
-    if (preloadCache.size > 64) {
-      // bounded LRU-ish: drop the oldest entry
+    if (preloadCache.size > 128) {
       const firstKey = preloadCache.keys().next().value;
       preloadCache.delete(firstKey);
     }
   }
   function render() {
-    img.src = urlFor(state.sceneIdx, state.methodIdx, state.ev);
+    methods.forEach((m, i) => {
+      panelImgs[i].src = urlFor(state.sceneIdx, m, state.ev);
+    });
     evLabel.textContent = formatEv(state.ev);
     [...sceneRow.children].forEach((b, i) =>
       b.classList.toggle("is-active-tab", i === state.sceneIdx));
-    [...methodRow.children].forEach((b, i) =>
-      b.classList.toggle("is-active-tab", i === state.methodIdx));
 
-    // Preload neighbors.
-    const evNeighbors = [state.ev - 1, state.ev + 1].filter(e =>
-      e >= Math.min(...evs) && e <= Math.max(...evs));
-    evNeighbors.forEach(e => preload(urlFor(state.sceneIdx, state.methodIdx, e)));
-    [state.methodIdx - 1, state.methodIdx + 1]
-      .filter(i => i >= 0 && i < methods.length)
-      .forEach(i => preload(urlFor(state.sceneIdx, i, state.ev)));
+    // Preload all methods at adjacent EV ticks, and the current EV at adjacent scenes.
+    const minEv = Math.min(...evs);
+    const maxEv = Math.max(...evs);
+    [state.ev - 1, state.ev + 1]
+      .filter(e => e >= minEv && e <= maxEv)
+      .forEach(e => methods.forEach(m => preload(urlFor(state.sceneIdx, m, e))));
     [state.sceneIdx - 1, state.sceneIdx + 1]
       .filter(i => i >= 0 && i < scenes.length)
-      .forEach(i => preload(urlFor(i, state.methodIdx, state.ev)));
+      .forEach(i => methods.forEach(m => preload(urlFor(i, m, state.ev))));
   }
 
   render();

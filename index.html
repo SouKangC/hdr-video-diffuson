@@ -63,11 +63,8 @@
           <h1 class="title is-1 publication-title">Single-Shot HDR Recovery via a Video Diffusion Prior</h1>
 
           <div class="is-size-5 publication-authors">
-            <span class="author-block">Chinmay Talegaonkar<sup>*</sup>,</span>
-            <span class="author-block">Nikhil Gandudi Suresh,</span>
-            <span class="author-block">Zachary Novack,</span>
-            <span class="author-block">Yash Belhe,</span>
-            <span class="author-block">Priyanka Nagasamudra,</span>
+            <span class="author-block">Chinmay Talegaonkar,</span>
+            <span class="author-block">Jinshi He,</span>
             <span class="author-block">Nicholas Antipa</span>
           </div>
 
@@ -75,8 +72,6 @@
             <span class="author-block">University of California San Diego</span>
             <br>
             <span class="author-block">NeurIPS 2026 Submission</span>
-            <br>
-            <span class="eql-cntrb"><small><sup>*</sup>Corresponding author</small></span>
           </div>
 
           <div class="column has-text-centered">
@@ -185,12 +180,14 @@
 </section>
 
 
-<!-- EV gallery: method-vs-baselines interactive -->
+<!-- EV gallery: side-by-side method comparison at a shared EV -->
 <section class="section">
-  <div class="container is-max-desktop">
+  <div class="container">
     <h2 class="title is-3 has-text-centered">Comparison with Baselines (Interactive)</h2>
-    <div class="content has-text-justified">
-      <p>Pick a scene, pick a method, drag the EV slider. The image below re-tone-maps the chosen method's HDR output at the chosen exposure. Comparing the same scene across methods at the same EV reveals where each method recovers highlights and shadows.</p>
+    <div class="container is-max-desktop">
+      <div class="content has-text-justified">
+        <p>Pick a scene and drag the EV slider. Every panel below re-tone-maps the same scene's HDR output at the chosen exposure, in lock-step across the ground truth, our method, and every baseline — so you can compare highlight and shadow recovery side by side.</p>
+      </div>
     </div>
     <div class="ev-gallery"
          data-scenes-src="scenes.json"
@@ -199,8 +196,7 @@
          data-template="assets/gallery/scene_{scene}/{method}_ev{ev}.webp"
          data-scenes-fallback='[{"id":12,"label":"A"}]'>
       <div class="scene-row"></div>
-      <img class="gallery-img" alt="">
-      <div class="method-row"></div>
+      <div class="gallery-grid"></div>
       <input type="range" class="ev-slider" min="-3" max="3" step="1" value="0">
       <div class="ev-label">EV: <span class="ev">+0</span></div>
     </div>
@@ -343,11 +339,10 @@
       </button>
     </div>
     <pre id="bibtex-code"><code>@inproceedings{talegaonkar2026hdrvideo,
-  title  = {Single-Shot HDR Recovery via a Video Diffusion Prior},
-  author = {Talegaonkar, Chinmay and Gandudi Suresh, Nikhil and Novack, Zachary
-            and Belhe, Yash and Nagasamudra, Priyanka and Antipa, Nicholas},
+  title     = {Single-Shot HDR Recovery via a Video Diffusion Prior},
+  author    = {Talegaonkar, Chinmay and He, Jinshi and Antipa, Nicholas},
   booktitle = {Advances in Neural Information Processing Systems},
-  year   = {2026}
+  year      = {2026}
 }</code></pre>
   </div>
 </section>
