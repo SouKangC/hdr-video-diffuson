@@ -291,8 +291,3 @@ table.table th, table.table td { padding: 0.35rem 0.55rem; }
   color: #fff;
 }
 
-/* Result-table tweaks: highlight the "Ours" row. */
-table.results tr.ours td {
-  color: #c0392b;
-  font-weight: 600;
-}
