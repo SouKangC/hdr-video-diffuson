@@ -9,6 +9,7 @@ Usage:  python scripts/pick_hero_scenes.py [--participants-root PATH]
 import argparse
 import csv
 import json
+import string
 from collections import defaultdict
 from pathlib import Path
 
@@ -37,10 +38,13 @@ def aggregate_win_rates(participants_root: Path) -> dict[int, tuple[int, int]]:
 def pick_top_n(rates: dict[int, tuple[int, int]], n: int = 6,
                min_trials: int = 15) -> list[dict]:
     """Filter by min_trials, sort by win rate descending, take top n, label A..."""
-    eligible = [(sid, w, t) for sid, (w, t) in rates.items() if t >= min_trials]
+    eligible = [(sid, w, t) for sid, (w, t) in rates.items() if t >= max(1, min_trials)]
     eligible.sort(key=lambda r: (-(r[1] / r[2]), r[0]))  # ties broken by lowest sid
     out = []
-    for label, (sid, w, t) in zip("ABCDEFGHIJ", eligible[:n]):
+    labels = string.ascii_uppercase[:n]
+    if n > len(labels):
+        raise ValueError(f"n={n} exceeds 26 (max single-letter labels A..Z)")
+    for label, (sid, w, t) in zip(labels, eligible[:n]):
         out.append({"id": sid, "label": label, "winRate": round(w / t, 4),
                     "wins": w, "trials": t})
     return out
