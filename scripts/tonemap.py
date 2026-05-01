@@ -20,9 +20,11 @@ def median_normalize_factor(rgb: np.ndarray, target: float = MEDIAN_TARGET) -> f
     """Scalar gain that, applied to `rgb`, makes its median luminance == target.
 
     Computed once per (scene, method) at EV=0 and reused for every EV tick.
+    Non-finite (Inf/NaN) luminance pixels are filtered out before the median,
+    so frames with bad highlight values don't blacken the output.
     """
     Y = luminance(rgb)
-    Y_pos = Y[Y > 1e-8]
+    Y_pos = Y[np.isfinite(Y) & (Y > 1e-8)]
     if Y_pos.size == 0:
         return 1.0
     med = float(np.median(Y_pos))

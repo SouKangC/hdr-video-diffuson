@@ -50,3 +50,15 @@ def test_srgb_encode_known_values():
     assert out[0, 0, 0] == pytest.approx(0.0, abs=1e-5)
     assert out[0, 0, 1] == pytest.approx(0.7354, abs=1e-3)
     assert out[0, 0, 2] == pytest.approx(1.0, abs=1e-5)
+
+
+def test_median_factor_handles_inf_pixels():
+    """Inf pixels (e.g. from clipped HDR highlights) must not blacken the gallery
+    by silently producing factor=0. Real EXR inputs sometimes contain Inf."""
+    rgb = np.full((4, 4, 3), 0.18, dtype=np.float32)
+    rgb[0, 0] = np.inf
+    factor = median_normalize_factor(rgb, target=0.18)
+    # Median of remaining finite >0 pixels is 0.18, so factor should be 1.0.
+    assert factor == pytest.approx(1.0, rel=1e-5)
+    # Sanity: also not zero or negative.
+    assert factor > 0
