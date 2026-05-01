@@ -12,6 +12,10 @@
 a, a:visited { color: var(--accent); }
 a:hover { color: var(--accent-dark); }
 
+/* Text-selection highlight in a light red tint instead of the OS default blue. */
+::selection      { background: #fad7d3; color: inherit; }
+::-moz-selection { background: #fad7d3; color: inherit; }
+
 /* Section headings (Abstract / Method / Quantitative Results / etc.) — pure
    black instead of the default dark-grey / themed color. */
 .section .title.is-3,
