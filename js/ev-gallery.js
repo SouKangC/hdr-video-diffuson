@@ -67,12 +67,14 @@ async function initGallery(root) {
     sceneRow.appendChild(b);
   });
 
-  // Build one panel per method. Each panel = label + image. Clicking a panel
-  // opens the zoom modal locked to that method (kept in sync as scene/EV change).
+  // Build one panel per method. Each panel = label + image. GT gets a special
+  // class so CSS can position it as a tall left cell spanning both grid rows.
   const panelImgs = [];
-  methods.forEach((m, i) => {
+  methods.forEach((m) => {
     const panel = document.createElement("div");
-    panel.className = "gallery-panel" + (m === "Ours" ? " is-ours" : "");
+    panel.className = "gallery-panel"
+      + (m === "Ours" ? " is-ours" : "")
+      + (m === "GT" ? " is-gt" : "");
     const label = document.createElement("div");
     label.className = "panel-label";
     label.textContent = m;
@@ -80,46 +82,11 @@ async function initGallery(root) {
     im.className = "panel-img";
     im.alt = `${m} reconstruction`;
     im.loading = "lazy";
-    im.addEventListener("click", () => openZoom(i));
     panel.appendChild(label);
     panel.appendChild(im);
     grid.appendChild(panel);
     panelImgs.push(im);
   });
-
-  // Modal wiring.
-  const modal = root.querySelector(".panel-zoom-modal");
-  const zoomImg = modal && modal.querySelector(".zoom-img");
-  const zoomLabel = modal && modal.querySelector(".zoom-label");
-  const zoomState = { open: false, methodIdx: 0 };
-
-  function openZoom(methodIdx) {
-    if (!modal) return;
-    zoomState.open = true;
-    zoomState.methodIdx = methodIdx;
-    syncZoom();
-    modal.classList.add("is-active");
-  }
-  function closeZoom() {
-    if (!modal) return;
-    zoomState.open = false;
-    modal.classList.remove("is-active");
-  }
-  function syncZoom() {
-    if (!modal || !zoomState.open) return;
-    const m = methods[zoomState.methodIdx];
-    zoomImg.src = urlFor(state.sceneIdx, m, state.ev);
-    zoomImg.alt = `${m} — Scene ${scenes[state.sceneIdx].label}, EV ${formatEv(state.ev)}`;
-    zoomLabel.textContent =
-      `${m}  ·  Scene ${scenes[state.sceneIdx].label}  ·  EV ${formatEv(state.ev)}`;
-  }
-  if (modal) {
-    modal.querySelector(".modal-background").addEventListener("click", closeZoom);
-    modal.querySelector(".modal-close").addEventListener("click", closeZoom);
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && zoomState.open) closeZoom();
-    });
-  }
 
   // Wire slider.
   slider.min = String(Math.min(...evs));
@@ -157,7 +124,6 @@ async function initGallery(root) {
     evLabel.textContent = formatEv(state.ev);
     [...sceneRow.children].forEach((b, i) =>
       b.classList.toggle("is-active-tab", i === state.sceneIdx));
-    syncZoom();
 
     // Preload all methods at adjacent EV ticks, and the current EV at adjacent scenes.
     const minEv = Math.min(...evs);
