@@ -183,6 +183,16 @@
       <div class="gallery-grid"></div>
       <input type="range" class="ev-slider" min="-3" max="3" step="1" value="0">
       <div class="ev-label">EV: <span class="ev">+0</span></div>
+
+      <!-- Click-to-zoom modal (Bulma .modal pattern); driven by ev-gallery.js. -->
+      <div class="modal panel-zoom-modal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+          <p class="image"><img class="zoom-img" alt=""></p>
+          <p class="zoom-label"></p>
+        </div>
+        <button class="modal-close is-large" aria-label="close" type="button"></button>
+      </div>
     </div>
   </div>
 </section>
