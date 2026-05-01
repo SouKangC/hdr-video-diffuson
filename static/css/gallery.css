@@ -215,10 +215,57 @@ table.table th, table.table td { padding: 0.35rem 0.55rem; }
   .ev-gallery .gallery-panel:hover .panel-img { transform: none; box-shadow: none; }
 }
 
+/* Native <input type="range"> styled with the red accent. */
 .ev-gallery .ev-slider {
   display: block;
   width: 100%;
   margin: 0.6rem 0 0.4rem;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 22px;
+  cursor: pointer;
+  /* Modern browsers honor accent-color and color the entire control. */
+  accent-color: var(--accent);
+}
+/* WebKit (Chrome / Safari) — track + thumb need explicit pseudo-element styles. */
+.ev-gallery .ev-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  background: #e6c3be;
+  border-radius: 3px;
+}
+.ev-gallery .ev-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+.ev-gallery .ev-slider:hover::-webkit-slider-thumb { background: var(--accent-dark); }
+/* Firefox. */
+.ev-gallery .ev-slider::-moz-range-track {
+  height: 6px;
+  background: #e6c3be;
+  border-radius: 3px;
+}
+.ev-gallery .ev-slider::-moz-range-progress {
+  height: 6px;
+  background: var(--accent);
+  border-radius: 3px;
+}
+.ev-gallery .ev-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
 }
 
 .ev-gallery .ev-label {
