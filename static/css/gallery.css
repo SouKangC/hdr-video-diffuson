@@ -123,7 +123,11 @@ table.table th, table.table td { padding: 0.35rem 0.55rem; }
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
   z-index: 5;
   pointer-events: none;
+  transition: opacity 0.18s ease;
 }
+/* Hide the badge while the panel is hover-zoomed so it doesn't float over the
+   enlarged image. */
+.ev-gallery .gallery-panel.is-ours:hover::before { opacity: 0; }
 
 .ev-gallery .panel-label {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -136,8 +140,7 @@ table.table th, table.table td { padding: 0.35rem 0.55rem; }
   border-bottom: 1px solid #e1e1e1;
 }
 .ev-gallery .gallery-panel.is-ours .panel-label {
-  color: #fff;
-  background: #c0392b;
+  color: #c0392b;
   font-weight: 700;
   letter-spacing: 0.03em;
 }
