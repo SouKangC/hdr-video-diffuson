@@ -15,7 +15,7 @@
    sections. Centers them so every section's body shares the same horizontal
    line width. The EV gallery is excluded (kept at full container width) so the
    side-by-side method panels have room to breathe. */
-:root { --reading-width: 720px; }
+:root { --reading-width: 900px; }
 .section .content,
 .section .table-container,
 .section figure.image,
