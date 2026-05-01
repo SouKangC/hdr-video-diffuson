@@ -16,6 +16,31 @@ a:hover { color: var(--accent-dark); }
   color: #fff;
 }
 
+/* Scroll-to-top floating button. */
+.scroll-to-top {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.scroll-to-top:hover {
+  background: var(--accent-dark);
+  border-color: var(--accent-dark);
+  color: #fff;
+}
+
+/* BibTeX copy button (uses Horwitz template's .copy-bibtex-btn class). */
+.copy-bibtex-btn {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.copy-bibtex-btn:hover {
+  background: var(--accent-dark);
+  border-color: var(--accent-dark);
+  color: #fff;
+}
+.copy-bibtex-btn.copied { background: #27ae60; border-color: #27ae60; }
+
 /* ---------- Compact content overrides ----------
    The hero (paper title, authors, publication-link buttons) keeps Bulma's
    default sizing; only the body content of each section is shrunk. */
