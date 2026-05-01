@@ -2,6 +2,10 @@
 :root {
   --accent: #c0392b;
   --accent-dark: #a93226;
+  /* Override Horwitz template's theme blue so .button.is-dark:hover (which uses
+     `background: var(--primary-color) !important`) goes to our red instead. */
+  --primary-color: #c0392b;
+  --primary-hover: #a93226;
 }
 
 /* All anchors in the page tone red (Bulma default is blue). */
