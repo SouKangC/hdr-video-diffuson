@@ -74,11 +74,8 @@ table.table th, table.table td { padding: 0.35rem 0.55rem; }
 .ev-gallery .gallery-panel.is-gt {
   grid-column: 1;
   grid-row: 1 / span 2;
-}
-.ev-gallery .gallery-panel.is-gt .panel-img {
-  aspect-ratio: auto;
-  height: 100%;
-  object-fit: cover;
+  align-self: center;     /* center the natural-size panel within the tall cell */
+  /* image keeps default 1/1 aspect-ratio — no cropping */
 }
 @media (max-width: 700px) {
   .ev-gallery .gallery-grid {
