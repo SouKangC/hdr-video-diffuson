@@ -196,7 +196,7 @@
   <p>Our method embodies the insight that many computational imaging problems can be re-cast as conditional video generation, followed by a task-specific fusion of the generated frames. In such settings, a strong video diffusion model can be fine-tuned to generate an ordered stack of intermediate images conditioned on the input, which can then be fused to obtain the final output. While we focus primarily on single-shot HDR reconstruction, the same framework extends naturally to other problems.</p>
   <p>As a proof of concept, we also apply it to all-in-focus image recovery from a single defocus-blurred input. In this setting, we fine-tune the video model to generate a focal stack with monotonically varying focus depth, analogous to the monotonic exposure progression used in the HDR case, and train a separate Fusion UNet on the same stack distribution to fuse the generated frames into an all-in-focus image. We simulate training data using paired RGB images and depth maps from the NYUv2 dataset, rendering focal stacks with a simple depth-aware defocus blur model. The results below provide a strong proof of concept that our framework extends beyond HDR to other computational photography tasks.</p>
   <figure>
-    <img src="assets/failure_cases.webp" alt="Defocus-to-all-in-focus generalization examples">
+    <img src="assets/defocus_results.webp" alt="All-in-focus image recovery from a single defocus-blurred input">
   </figure>
 </section>
 
