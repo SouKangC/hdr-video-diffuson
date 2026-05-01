@@ -8,8 +8,8 @@
 .hero.teaser .hero-body { padding: 1rem 1.5rem; }
 
 /* Body content — tighter line-height + paragraph spacing. */
-.content { font-size: 0.875rem; line-height: 1.55; }
-.content p { margin-bottom: 0.7rem; }
+.content { font-size: 0.875rem; line-height: 1.3; }
+.content p { margin-bottom: 0.6rem; line-height: 1.3; }
 
 /* Tables tighter. */
 table.table { font-size: 0.8rem; }
