@@ -1,9 +1,12 @@
-/* ---------- Red accent palette (used by Ours highlights + publication-link
-                button hover state). Everything else keeps Bulma defaults. ---------- */
+/* ---------- Red accent palette ---------- */
 :root {
   --accent: #c0392b;
   --accent-dark: #a93226;
 }
+
+/* All anchors in the page tone red (Bulma default is blue). */
+a, a:visited { color: var(--accent); }
+a:hover { color: var(--accent-dark); }
 
 /* Publication-link buttons (Paper / arXiv / Code / Data / BibTeX): keep
    Bulma `is-dark` black at rest; turn red on hover. */
