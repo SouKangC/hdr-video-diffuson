@@ -1,44 +1,7 @@
 [
-  {
-    "id": 12,
-    "label": "A",
-    "winRate": 1.0,
-    "wins": 20,
-    "trials": 20
-  },
-  {
-    "id": 14,
-    "label": "B",
-    "winRate": 1.0,
-    "wins": 20,
-    "trials": 20
-  },
-  {
-    "id": 31,
-    "label": "C",
-    "winRate": 1.0,
-    "wins": 20,
-    "trials": 20
-  },
-  {
-    "id": 32,
-    "label": "D",
-    "winRate": 1.0,
-    "wins": 20,
-    "trials": 20
-  },
-  {
-    "id": 47,
-    "label": "E",
-    "winRate": 1.0,
-    "wins": 20,
-    "trials": 20
-  },
-  {
-    "id": 49,
-    "label": "F",
-    "winRate": 1.0,
-    "wins": 20,
-    "trials": 20
-  }
+  {"id": 80, "label": "A"},
+  {"id": 33, "label": "B"},
+  {"id": 47, "label": "C"},
+  {"id": 13, "label": "D"},
+  {"id": 32, "label": "E"}
 ]
