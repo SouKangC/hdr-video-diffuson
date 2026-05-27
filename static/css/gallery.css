@@ -36,6 +36,14 @@ a:hover { color: var(--accent-dark); }
   box-shadow: 0 4px 10px rgba(192, 57, 43, 0.35);
 }
 
+/* Inline note shown under the publication-link buttons (e.g. "Code coming soon"). */
+.code-coming-soon {
+  margin: 0.9rem 0 0;
+  text-align: center;
+  color: #888;
+  font-size: 0.95rem;
+}
+
 /* Scroll-to-top floating button. */
 .scroll-to-top {
   background: var(--accent);
